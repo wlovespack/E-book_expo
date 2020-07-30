@@ -1,94 +1,94 @@
-import React, { Component } from "react";
-import HomeScreen from "./src/HomeScreen";
-import Grade11Screen from "./src/Grade11Screen";
-import { createDrawerNavigator, DrawerItems } from "react-navigation-drawer";
+import React, { useState, useEffect } from "react";
+//thrid-party plugins
+import { createDrawerNavigator } from "react-navigation-drawer";
 import { createAppContainer } from "react-navigation";
-import { Container, Content, Header, Body } from 'native-base'
-import { View, Image } from "react-native";
-import HelpScreen from "./src/HelpScreen";
-import SettingScreen from "./src/SettingScreen";
-import ContactScreen from "./src/ContactScreen";
-import ShareScreen from "./src/ShareScreen";
+import { Spinner } from "native-base";
+import { Text,AsyncStorage } from "react-native";
+//Components
+import Home from "./src/screens/Home";
+import Books from "./src/screens/Books";
+import Store from "./src/screens/Store";
+import Setting from "./src/screens/Setting";
+import Contact from "./src/screens/Contact";
+import Share from "./src/screens/Share";
+import CustomDrawerContentComponent from "./src/CustomDrawerContentComponent";
+//context
+import languageContext, { lang } from "./src/Language/languageContext";
 
-class App extends Component {
-  render() {
-    const style = {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    }
+//
+function App() {
+  const ln = AsyncStorage.getItem("lang");
+  const [chosenLanguage, setChosenLanguage] = useState("en");
+  const [language, setlanguage] = useState(lang[chosenLanguage]);
+  const [appReady, setAppReady] = useState(false);
 
-    return (
-
-      <View style={style} >
-        <MyApp />
-      </View>
-
-    )
-  }
-}
-const CustomDrawerContentComponent = (props) => (
-
-  <Container>
-    <Header style={{
-      height: 200,
-      backgroundColor: 'white'
-    }}>
-      <Body>
-        <Image
-          style={{
-            height: 150,
-            width: 150,
-            borderRadius: 75,
-            left: 50
-          }}
-          source={require('./assets/Logo.jpg')} />
-      </Body>
-    </Header>
-    <Content>
-      <DrawerItems {...props} />
-    </Content>
-
-  </Container>
-
-);
-
-
-const MyApp = createDrawerNavigator({
-  Home: {
-    screen: HomeScreen
-
-  },
-  " Change To Grade 11": {
-    screen: Grade11Screen
-  },
-  ' Help & Support': {
-    screen: HelpScreen
-  },
-  Setting: {
-    screen: SettingScreen
-  },
-  contact: {
-    screen: ContactScreen
-  },
-  Share: {
-    screen: ShareScreen
-  }
-
-
-},
-  {
-    initialRouteName: 'Home',
-    drawerPosition: 'left',
-    contentComponent: CustomDrawerContentComponent,
-    drawerOpenRoute: 'DrawerOpen',
-    drawerCloseRoute: 'DrawerClose',
-    drawerToggleRoute: 'DrawerToggle'
-
-
+  // A promise that gets resolved if AsyncStorage returns 
+  // the language that the user chose 
+  ln.then((e) => {
+    setChosenLanguage(e ? e : "en");
+    setAppReady(true);
+  }).catch((err) => {
+    console.warn(err);
+    setAppReady(true);
   });
 
-const Nav = createAppContainer(MyApp);
-export default Nav;
+  const changeChosenLanguage = (value) => {
+    AsyncStorage.setItem("lang", value);
+    globalLanguage = value;
+    setChosenLanguage(value);
+  };
+  //change the overall language if the chosenLanguage changes
+  useEffect(() => {
+    setlanguage(lang[chosenLanguage]);
+  }, [chosenLanguage]);
 
+  const Nav = createAppContainer(
+    createDrawerNavigator(
+      {
+        [language.menu_item_1]: Home,
+        [language.menu_item_2]: Books,
+        [language.menu_item_3]: Store,
+        [language.menu_item_4]: Setting,
+        [language.menu_item_5]: Contact,
+        [language.menu_item_6]: Share,
+      },
+      {
+        initialRouteName: language.menu_item_1,
+        drawerPosition: "left",
+        contentComponent: CustomDrawerContentComponent,
+        drawerOpenRoute: "DrawerOpen",
+        drawerCloseRoute: "DrawerClose",
+        drawerToggleRoute: "DrawerToggle",
+      }
+    )
+  );
+        
+  // return <Nav />; 
+  if (appReady) {
+    return (
+      <languageContext.Provider
+        value={{
+          lang: language,
+          change: changeChosenLanguage,
+          chosen: chosenLanguage,
+        }}
+      >
+{/* <Text>Test Test Test</Text> */}
+      
+      <Nav />
+      </languageContext.Provider>
+    );
+  } else {
+    return (
+      <Spinner
+        style={{ position: "absolute", top: 47 + "%", left: 47 + "%" }}
+        color="black"
+      />
+    );
+  }
+}
 
+export default App;
+// export default ()=>{
+//   return <Text>The Test</Text>
+// };

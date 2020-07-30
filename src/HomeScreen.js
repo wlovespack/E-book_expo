@@ -1,6 +1,8 @@
 import React, { Component } from "react";
-import { Text, Image } from "react-native";
+import { Text, Image, View, Modal, SafeAreaView, Switch } from "react-native";
 import { Container, Content, Header, Icon, Left, Body, Right, Button, } from "native-base";
+import PDFReader from 'rn-pdf-reader-js'
+import { Asset } from "expo-asset";
 
 class HomeScreen extends Component {
     static navigationOptions = {
@@ -15,9 +17,10 @@ class HomeScreen extends Component {
         )
     }
     render() {
+        let absolute_path = Asset.fromModule(require('../assets/docs/Amharic-G11.pdf')).uri
         return (
             <Container>
-                <Header  style={{ backgroundColor: "#fff" }}>
+                <Header style={{ backgroundColor: "#fff" }}>
                     <Left>
                         <Button transparent>
                             <Icon name='menu' style={{ color: '#000000' }} onPress={() => this.props.navigation.openDrawer()} />
@@ -30,12 +33,15 @@ class HomeScreen extends Component {
                 </Header>
                 <Content contentContainerStyle={{
                     flex: 1,
-                    justifyContent: 'center',
+                    justifyContent: 'flex-start',
                     alignItems: 'center',
+                    marginTop: 25,
                 }} >
-                    <Text>
-                        Hello from  HomeScreen
-                    </Text>
+                    <PDFReader
+                        source={{
+                            uri: absolute_path,
+                        }}
+                    />
                 </Content>
             </Container>
         );
