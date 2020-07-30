@@ -2,8 +2,7 @@ import React,{Component} from "react";
 import { Text, Image,View } from "react-native";
 import { Container, Content } from "native-base";
 import Header from "./Header";
-//context
-import languageContext from "./Language/languageContext";
+import Contain from "./Contain";
 //
 class Screen extends Component {
   static navigationOptions = {
@@ -20,11 +19,14 @@ class Screen extends Component {
 
   render() {
     return (
-      
-    <Container style={{backgroundColor: "rgb(237,237,240)"}}>
+      <Contain>
         <Header {...this.props} />
-        <Content>{this.props.children}</Content>
-      </Container>
+        <Content style={{display:'flex'}}>
+        <View style={{marginBottom:100}}>
+        {this.props.children}
+        </View>
+        </Content>
+      </Contain>
     );
   }
 }
