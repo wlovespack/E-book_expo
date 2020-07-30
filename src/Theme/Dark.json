@@ -1,0 +1,18 @@
+{
+    "bg":"rgb(33,33,33)",
+    "header":"#272e38",
+    "header_text":"#fff",
+    "item_bg":"rgb(40,45,50)",
+    "item_border":"rgba(20,20,30,0.2)",
+    "item_text":"rgb(238,238,238)",
+    "item_fadedText":"rgb(158,158,158)",
+    "drawer":"rgb(44,44,44)",
+    "drawer_highlight":"rgba(0,0,0,0.2)",
+    "button":"rgb(0,96,100)",
+    "home_continue_bg":"rgba(10,15,25,0.2)",
+    "home_recommend_bg":"rgba(10,15,25,0.2)",
+    "activeTint":"rgb(38,198,218)",
+    "inactiveTint":"rgb(220,220,220)",
+    "input_border":"rgba(20,20,30,0.2)",
+    "input_bg":"rgb(40,45,50)"
+}
