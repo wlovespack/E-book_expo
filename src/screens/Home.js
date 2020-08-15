@@ -17,16 +17,19 @@ function Home(props) {
   const { lang, continueReading, recommendation, theme, isOnline } = useContext(
     Context
   );
-  const [recommend, setRecommend] = useState(null);
-  const [reading, setReading] = useState({
-    book: "Math grade 12",
-    page: 12,
-    time: '12-23-2020',
-  });
-  // const [reading, setReading] = useState(false);
+  const [recommend, setRecommend] = useState({name:null,publisher:null});
+  // const [reading, setReading] = useState({
+  //   book: "Math grade 12",
+  //   page: 12,
+  //   time: '12-23-2020',
+  // });
+  const [reading, setReading] = useState(false);
   //
   useEffect(() => {
-    getRecommendation().then((e) => setRecommend(e));
+    getRecommendation().then((e) => setRecommend(e)).catch(err=>{
+      console.log(err);
+      setRecommend({name:"Network failed"})
+    });
   }, []);
   return (
     <Screen {...props}>
@@ -126,11 +129,10 @@ function Home(props) {
             {isOnline ? (
               <View>
                 <Text style={[s.title, { color: theme.item_text }]}>
-                  {recommend ? recommend.name : ""}
+                  {recommend.name ? recommend.name : "Network failed"}
                 </Text>
                 <Text style={[s.publisher, { color: theme.item_fadedText }]}>
-                  {lang.home_card_2_item_1}:{" "}
-                  {recommend ? recommend.publisher : ""}
+                  {recommend.publisher ? lang.home_card_2_item_1 + ': ' + recommend.publisher : "Network failed check your internet connection"}
                 </Text>
               </View>
             ) : (

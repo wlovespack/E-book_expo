@@ -28,7 +28,7 @@ function App() {
   const [theme, setTheme] = useState(Themes[chosenTheme]);
   const [appReady, setAppReady] = useState(false);
   const [refresher,setRefresher] = useState(0);
-  const [isOnline,setIsOnline] = useState(true);
+  const [isOnline,setIsOnline] = useState(false);
   //
   // check if the device has internet connection
   useEffect(()=>{
