@@ -126,7 +126,8 @@ const s = StyleSheet.create({
     top: 30,
     left: 5 + "%",
     width: 90 + "%",
-    height: 100,
+    minHeight: 100,
+    maxHeight: 170,
     flexDirection: "row",
     borderRadius: 10,
     paddingRight: 10,
@@ -142,24 +143,25 @@ const s = StyleSheet.create({
     alignItems: "center",
   },
   imgActual: {
-    height: 50,
-    width: 50,
+    height: 40,
+    width: 40,
   },
   imgActual2: {
-    height: 60,
-    width: 60,
+    height: 45,
+    width: 45,
   },
   txt: {
     height: 100 + "%",
-    flex: 3,
+    flex: 4.25,
   },
   txtHeader: {
     fontSize: 22,
-    marginTop: 10,
+    marginTop: 15,
   },
   txtBody: {
     fontSize: 15,
     fontWeight: "300",
+    paddingBottom:5,
   },
 });
 export default Contact;

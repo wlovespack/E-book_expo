@@ -7,15 +7,15 @@ import * as Light from "./Theme/Light.json";
 import * as Dark from "./Theme/Dark.json";
 //
 export const lang = { en: English, am: Amharic };
-export const Themes = {default:Default,light:Light,dark:Dark};
+export const Themes = { default: Default, light: Light, dark: Dark };
 //
 export default React.createContext({
-  lang:lang.en,
+  lang: lang.en,
   changeChosenLanguage: () => {},
   chosenLanguage: "",
-  continueReading:true,
-  recommendation:true,
-  theme:Themes.default,
-  changeTheme:()=>{},
-  chosenTheme:''
+  continueReading: true,
+  recommendation: true,
+  theme: Themes.default,
+  changeTheme: () => {},
+  chosenTheme: "",
 });
