@@ -25,7 +25,7 @@ import { TouchableNativeFeedback } from "react-native-gesture-handler";
 //
 
 function Store(props) {
-  const { theme, lang } = useContext(Context);
+  const { theme, lang,isOnline } = useContext(Context);
   const [text, setText] = useState("");
   const [resultValue, setResultValue] = useState("");
   const [DATA, setDATA] = useState([]);
