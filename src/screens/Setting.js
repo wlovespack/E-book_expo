@@ -1,7 +1,19 @@
 import React, { useContext } from "react";
-import { Text, View, Picker, StyleSheet, Switch } from "react-native";
+import {
+  Text,
+  View,
+  Picker,
+  StyleSheet,
+  Switch,
+  TouchableNativeFeedback,
+  Alert,
+  AsyncStorage,
+  ToastAndroid,
+} from "react-native";
+import * as FileSystem from "expo-file-system";
+//
 import Screen from "../Screen";
-import Context from "../Context";
+import Context, { lang } from "../Context";
 //
 function Setting(props) {
   const { theme, lang } = useContext(Context);
@@ -23,6 +35,11 @@ function Setting(props) {
           {lang.setting_section_3}
         </Text>
         <Theme />
+        <Text style={[s.section, { color: theme.item_fadedText }]}>
+          {lang.setting_section_4}
+        </Text>
+        <ClearStorage />
+        <ResetSettings />
       </View>
     </Screen>
   );
@@ -61,7 +78,9 @@ const Language = () => {
 };
 
 const Continue = () => {
-  const { continueReading, changeContinueReading, theme,lang } = useContext(Context);
+  const { continueReading, changeContinueReading, theme, lang } = useContext(
+    Context
+  );
   return (
     <View
       style={[
@@ -85,7 +104,9 @@ const Continue = () => {
 };
 
 const Recommended = () => {
-  const { recommendation, changeRecommendation, theme,lang } = useContext(Context);
+  const { recommendation, changeRecommendation, theme, lang } = useContext(
+    Context
+  );
   return (
     <View
       style={[
@@ -94,7 +115,7 @@ const Recommended = () => {
       ]}
     >
       <Text style={[s.itemTitle, { color: theme.item_text }]}>
-      {lang.setting_item_3}
+        {lang.setting_item_3}
       </Text>
       <View style={s.itemAction}>
         <Switch
@@ -109,7 +130,7 @@ const Recommended = () => {
 };
 
 const Theme = () => {
-  const { theme,lang, changeTheme, chosenTheme } = useContext(Context);
+  const { theme, lang, changeTheme, chosenTheme } = useContext(Context);
   return (
     <View
       style={[
@@ -117,7 +138,9 @@ const Theme = () => {
         { backgroundColor: theme.item_bg, borderColor: theme.item_border },
       ]}
     >
-      <Text style={[s.itemTitle, { color: theme.item_text }]}>{lang.setting_item_4}</Text>
+      <Text style={[s.itemTitle, { color: theme.item_text }]}>
+        {lang.setting_item_4}
+      </Text>
       <View style={s.itemAction}>
         <Picker
           selectedValue={chosenTheme}
@@ -129,6 +152,104 @@ const Theme = () => {
           <Picker.Item label={lang.setting_item_4_label_2} value="light" />
           <Picker.Item label={lang.setting_item_4_label_3} value="dark" />
         </Picker>
+      </View>
+    </View>
+  );
+};
+
+const ClearStorage = () => {
+  const { theme, lang, Refresh } = useContext(Context);
+  const clear = () => {
+    Alert.alert(
+      lang.setting_item_5_alert_title,
+      lang.setting_item_5_alert_body,
+      [
+        {
+          text: lang.setting_item_5_alert_positive,
+          onPress: () => {
+            AsyncStorage.getItem("books")
+              .then((e) => {
+                if (e) {
+                  const val = JSON.parse(e);
+                  val.map((v) => {
+                    FileSystem.deleteAsync(v.img);
+                    FileSystem.deleteAsync(v.file);
+                  });
+                  Refresh();
+                }
+                AsyncStorage.removeItem("books", (err) => console.log(err));
+              })
+              .catch((err) => console.log(err));
+            ToastAndroid.showWithGravityAndOffset(
+              lang.setting_item_5_toast,
+              ToastAndroid.LONG,
+              ToastAndroid.BOTTOM,
+              25,
+              95
+            );
+          },
+        },
+        { text: lang.setting_item_5_alert_negative, style: "cancel" },
+      ],
+      { cancelable: true }
+    );
+  };
+  return (
+    <View
+      style={[
+        s.item,
+        { backgroundColor: theme.item_bg, borderColor: theme.item_border },
+      ]}
+    >
+      <Text style={[s.itemTitle, { color: theme.item_text }]}>
+        {lang.setting_item_5}
+      </Text>
+      <View style={s.itemAction}>
+        <TouchableNativeFeedback onPress={clear}>
+          <View style={s.itemCon}>
+            <Text style={s.itemText}>{lang.setting_item_5_button}</Text>
+          </View>
+        </TouchableNativeFeedback>
+      </View>
+    </View>
+  );
+};
+
+const ResetSettings = () => {
+  const { theme,lang, Refresh } = useContext(Context);
+  const reset = () => {
+    Alert.alert(
+      lang.setting_item_6_alert_title,
+      lang.setting_item_6_alert_body,
+      [
+        {
+          text: lang.setting_item_6_alert_positive,
+          onPress: () => {
+            AsyncStorage.removeItem("setting", (err) => console.log(err));
+            Refresh();
+          },
+        },
+        { text: lang.setting_item_6_alert_negative, style: "cancel" },
+      ],
+      { cancelable: true }
+    );
+  };
+  return (
+    <View
+      style={[
+        s.item,
+        { backgroundColor: theme.item_bg, borderColor: theme.item_border },
+      ]}
+    >
+      <Text style={[s.itemTitle, { color: theme.item_text }]}>
+        {lang.setting_item_6}
+      </Text>
+      <View style={s.itemAction}>
+        <TouchableNativeFeedback onPress={reset}>
+          <View style={s.itemCon}>
+            <Text style={s.itemText}>{lang.setting_item_6_button}</Text>
+          </View>
+        </TouchableNativeFeedback>
       </View>
     </View>
   );
@@ -159,6 +280,16 @@ const s = StyleSheet.create({
     right: 6 + "%",
     height: 54,
     justifyContent: "center",
+  },
+  itemCon: {
+    height: 100 + "%",
+    width: 85,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  itemText: {
+    fontSize: 17,
+    color: "rgb(31,111,202)",
   },
   picker: {
     height: 54,

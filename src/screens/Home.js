@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Text,
   StyleSheet,
@@ -11,10 +11,23 @@ import { Ionicons } from "@expo/vector-icons";
 import Screen from "./../Screen";
 //context
 import Context from "./../Context";
+import { getRecommendation } from "./../SearchHub";
 //
 function Home(props) {
-  const { lang, continueReading, recommendation, theme } = useContext(Context);
+  const { lang, continueReading, recommendation, theme, isOnline } = useContext(
+    Context
+  );
+  const [recommend, setRecommend] = useState(null);
+  const [reading, setReading] = useState({
+    book: "Math grade 12",
+    page: 12,
+    time: '12-23-2020',
+  });
+  // const [reading, setReading] = useState(false);
   //
+  useEffect(() => {
+    getRecommendation().then((e) => setRecommend(e));
+  }, []);
   return (
     <Screen {...props}>
       {continueReading ? (
@@ -32,44 +45,66 @@ function Home(props) {
               {lang.home_card_1_header}
             </Text>
           </View>
-          <View style={s.body}>
-            <View
-              style={{
-                padding: 5,
-                borderRightWidth: 2,
-                borderRightColor: theme.item_border,
-              }}
-            >
-              <Text style={[s.des, { color: theme.item_fadedText }]}>
-                {lang.home_card_1_item_1}:
+          {reading ? (
+            <View style={s.body}>
+              <View
+                style={{
+                  padding: 5,
+                  borderRightWidth: 2,
+                  borderRightColor: theme.item_border,
+                }}
+              >
+                <Text style={[s.des, { color: theme.item_fadedText }]}>
+                  {lang.home_card_1_item_1}:
+                </Text>
+                <Text style={[s.value, { color: theme.item_text }]}>
+                  {reading.book}{" "}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  padding: 5,
+                  borderRightWidth: 2,
+                  borderRightColor: theme.item_border,
+                }}
+              >
+                <Text style={[s.des, { color: theme.item_fadedText }]}>
+                  {lang.home_card_1_item_2}:
+                </Text>
+                <Text style={[s.value, { color: theme.item_text }]}>
+                  {" "}
+                  {reading.page}
+                </Text>
+              </View>
+              <View style={{ flex: 2, padding: 5 }}>
+                <Text style={[s.des, { color: theme.item_fadedText }]}>
+                  {lang.home_card_1_item_3}:
+                </Text>
+                <Text style={[s.value, { color: theme.item_text }]}>
+                  {" "}
+                  {reading.time}
+                </Text>
+              </View>
+            </View>
+          ) : (
+            <View style={s.body2}>
+            <View style={s.noInternetCon}>
+                  <Ionicons
+                    name="md-sad"
+                    style={s.noInternetIcon}
+                    size={25}
+                    color={theme.item_fadedText}
+                  />
+              <Text style={[s.noInternet, { color: theme.item_fadedText }]}>
+                Nothing to show
               </Text>
-              <Text style={[s.value, { color: theme.item_text }]}>
-                Math grade 12{" "}
+              </View>
+              <Text style={[s.noInternetDes, { color: theme.item_fadedText }]}>
+                Once you start reading some book this feature will be available
               </Text>
             </View>
-            <View
-              style={{
-                flex: 1,
-                padding: 5,
-                borderRightWidth: 2,
-                borderRightColor: theme.item_border,
-              }}
-            >
-              <Text style={[s.des, { color: theme.item_fadedText }]}>
-                {lang.home_card_1_item_2}:
-              </Text>
-              <Text style={[s.value, { color: theme.item_text }]}> 78</Text>
-            </View>
-            <View style={{ flex: 2, padding: 5 }}>
-              <Text style={[s.des, { color: theme.item_fadedText }]}>
-                {lang.home_card_1_item_3}:
-              </Text>
-              <Text style={[s.value, { color: theme.item_text }]}>
-                {" "}
-                12:00 june 12
-              </Text>
-            </View>
-          </View>
+          )}
           <Button title={`${lang.home_button_1} >>`} color={theme.button} />
         </View>
       ) : (
@@ -88,14 +123,41 @@ function Home(props) {
             </Text>
           </View>
           <View style={s.body2}>
-            <Text style={[s.title, { color: theme.item_text }]}>
-              Start With Why
-            </Text>
-            <Text style={[s.publisher, { color: theme.item_fadedText }]}>
-              {lang.home_card_2_item_1}: Simon senik
-            </Text>
+            {isOnline ? (
+              <View>
+                <Text style={[s.title, { color: theme.item_text }]}>
+                  {recommend ? recommend.name : ""}
+                </Text>
+                <Text style={[s.publisher, { color: theme.item_fadedText }]}>
+                  {lang.home_card_2_item_1}:{" "}
+                  {recommend ? recommend.publisher : ""}
+                </Text>
+              </View>
+            ) : (
+              <View>
+                <View style={s.noInternetCon}>
+                  <Ionicons
+                    name="md-airplane"
+                    style={s.noInternetIcon}
+                    size={25}
+                    color={theme.item_fadedText}
+                  />
+                  <Text style={[s.noInternet, { color: theme.item_fadedText }]}>
+                    No Internet
+                  </Text>
+                </View>
+                <Text
+                  style={[s.noInternetDes, { color: theme.item_fadedText }]}
+                >
+                  Internet connection is needed to show recommended books.
+                </Text>
+              </View>
+            )}
           </View>
-          <Button title={`${lang.home_button_2} >>`} color={theme.button} />
+          <Button
+            title={`${lang.home_button_2} >>`}
+            color={theme.button}
+          />
         </View>
       ) : (
         <View />
@@ -113,7 +175,7 @@ function Home(props) {
               },
             ]}
           >
-            <Ionicons name="md-cart" size={40} color={theme.item_text} />
+            <Ionicons name="md-cart" size={35} color={theme.item_text} />
             <Text style={[s.cardTitle, { color: theme.item_text }]}>
               {lang.home_smallCard_1}
             </Text>
@@ -131,7 +193,7 @@ function Home(props) {
               },
             ]}
           >
-            <Ionicons name="md-bookmarks" size={40} color={theme.item_text} />
+            <Ionicons name="md-bookmarks" size={35} color={theme.item_text} />
             <Text style={[s.cardTitle, { color: theme.item_text }]}>
               {lang.home_smallCard_2}
             </Text>
@@ -151,7 +213,7 @@ function Home(props) {
           >
             <Ionicons
               name="md-information-circle"
-              size={40}
+              size={35}
               color={theme.item_text}
             />
             <Text style={[s.cardTitle, { color: theme.item_text }]}>
@@ -238,7 +300,7 @@ const s = StyleSheet.create({
     height: 115,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 4 + "%",
+    marginRight: 15,
     borderRadius: 10,
     borderWidth: 3,
   },
@@ -253,6 +315,24 @@ const s = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 22,
+  },
+  noInternet: {
+    fontSize: 25,
+    textAlign: "center",
+  },
+  noInternetDes: {
+    fontSize: 16,
+    textAlign: "center",
+  },
+  noInternetCon: {
+    flexDirection: "row",
+    alignSelf: "center",
+    marginTop: -10,
+    marginBottom: 5,
+  },
+  noInternetIcon: {
+    alignSelf: "center",
+    marginRight: 5,
   },
 });
 export default Home;
