@@ -17,7 +17,7 @@ function Home(props) {
   const { lang, continueReading, recommendation, theme, isOnline } = useContext(
     Context
   );
-  const [recommend, setRecommend] = useState({name:null,publisher:null});
+  const [recommend, setRecommend] = useState({ name: null, publisher: null });
   // const [reading, setReading] = useState({
   //   book: "Math grade 12",
   //   page: 12,
@@ -26,9 +26,9 @@ function Home(props) {
   const [reading, setReading] = useState(false);
   //
   useEffect(() => {
-    getRecommendation().then((e) => setRecommend(e)).catch(err=>{
+    getRecommendation().then((e) => setRecommend(e)).catch(err => {
       console.log(err);
-      setRecommend({name:"Network failed"})
+      setRecommend({ name: "Network failed" })
     });
   }, []);
   return (
@@ -91,28 +91,28 @@ function Home(props) {
               </View>
             </View>
           ) : (
-            <View style={s.body2}>
-            <View style={s.noInternetCon}>
+              <View style={s.body2}>
+                <View style={s.noInternetCon}>
                   <Ionicons
                     name="md-sad"
                     style={s.noInternetIcon}
                     size={25}
                     color={theme.item_fadedText}
                   />
-              <Text style={[s.noInternet, { color: theme.item_fadedText }]}>
-                Nothing to show
+                  <Text style={[s.noInternet, { color: theme.item_fadedText }]}>
+                    Nothing to show
+              </Text>
+                </View>
+                <Text style={[s.noInternetDes, { color: theme.item_fadedText }]}>
+                  Once you start reading some book this feature will be available
               </Text>
               </View>
-              <Text style={[s.noInternetDes, { color: theme.item_fadedText }]}>
-                Once you start reading some book this feature will be available
-              </Text>
-            </View>
-          )}
+            )}
           <Button title={`${lang.home_button_1} >>`} color={theme.button} />
         </View>
       ) : (
-        <View />
-      )}
+          <View />
+        )}
       {recommendation ? (
         <View
           style={[
@@ -136,25 +136,25 @@ function Home(props) {
                 </Text>
               </View>
             ) : (
-              <View>
-                <View style={s.noInternetCon}>
-                  <Ionicons
-                    name="md-airplane"
-                    style={s.noInternetIcon}
-                    size={25}
-                    color={theme.item_fadedText}
-                  />
-                  <Text style={[s.noInternet, { color: theme.item_fadedText }]}>
-                    No Internet
+                <View>
+                  <View style={s.noInternetCon}>
+                    <Ionicons
+                      name="md-airplane"
+                      style={s.noInternetIcon}
+                      size={25}
+                      color={theme.item_fadedText}
+                    />
+                    <Text style={[s.noInternet, { color: theme.item_fadedText }]}>
+                      No Internet
                   </Text>
-                </View>
-                <Text
-                  style={[s.noInternetDes, { color: theme.item_fadedText }]}
-                >
-                  Internet connection is needed to show recommended books.
+                  </View>
+                  <Text
+                    style={[s.noInternetDes, { color: theme.item_fadedText }]}
+                  >
+                    Internet connection is needed to show recommended books.
                 </Text>
-              </View>
-            )}
+                </View>
+              )}
           </View>
           <Button
             title={`${lang.home_button_2} >>`}
@@ -162,8 +162,8 @@ function Home(props) {
           />
         </View>
       ) : (
-        <View />
-      )}
+          <View />
+        )}
       <View style={s.cards}>
         <TouchableNativeFeedback
           onPress={() => props.navigation.navigate(lang.menu_item_3)}
@@ -228,6 +228,7 @@ function Home(props) {
   );
 }
 const s = StyleSheet.create({
+
   block: {
     position: "relative",
     top: 15,

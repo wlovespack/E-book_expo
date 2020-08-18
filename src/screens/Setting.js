@@ -216,7 +216,7 @@ const ClearStorage = () => {
 };
 
 const ResetSettings = () => {
-  const { theme,lang, Refresh } = useContext(Context);
+  const { theme, lang, Refresh } = useContext(Context);
   const reset = () => {
     Alert.alert(
       lang.setting_item_6_alert_title,
@@ -267,6 +267,7 @@ const s = StyleSheet.create({
     width: 100 + "%",
     height: 60,
     marginBottom: 5,
+    borderRadius: 10.
   },
   itemTitle: {
     fontSize: 20,

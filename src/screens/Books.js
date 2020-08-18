@@ -32,7 +32,7 @@ function Books(props) {
       })
       .catch((err) => console.log(err));
   };
-  React.useEffect(()=>{
+  React.useEffect(() => {
     // AsyncStorage.removeItem("books")
     AsyncStorage.getItem("books")
       .then((e) => {
@@ -42,7 +42,7 @@ function Books(props) {
         }
       })
       .catch((err) => console.log(err));
-  },[])
+  }, [])
   function Item({ id, img }) {
     return (
       <TouchableNativeFeedback onPress={() => console.log("Opening Book ... ")}>
@@ -74,7 +74,7 @@ function Books(props) {
           {lang.books_head}
         </Text>
         <View style={s.getBooks}>
-        <Button title={orReplacer(lang.books_button,(DATA.length > 0))} color={theme.button} onPress={()=>props.navigation.navigate(lang.menu_item_3)}/>
+          <Button title={orReplacer(lang.books_button, (DATA.length > 0))} color={theme.button} onPress={() => props.navigation.navigate(lang.menu_item_3)} />
         </View>
         <FlatList
           style={s.flatList}
@@ -99,10 +99,10 @@ function Books(props) {
 export default Books;
 
 const s = StyleSheet.create({
-  flatList:{
+  flatList: {
     // backgroundColor:'red',
-    top:-50,
-    paddingTop:80
+    top: -50,
+    paddingTop: 80
   },
   block: {
     width: 45 + "%",
@@ -123,10 +123,10 @@ const s = StyleSheet.create({
     marginTop: 15,
   },
   getBooks: {
-      position:"absolute",
-      top: 15,
-      right: "5%",
-      zIndex:100
+    position: "absolute",
+    top: 15,
+    right: "5%",
+    zIndex: 100
   },
   empty: {
     fontSize: 20,

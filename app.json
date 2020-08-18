@@ -2,27 +2,34 @@
   "expo": {
     "name": "e-book",
     "slug": "e-book",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
+    "platforms": ["ios", "android", "web"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+    "ios": {
+      "supportsTablet": true,
+      "splash": {
+        "image": "./assets/splash.png",
+        "resizeMode": "cover"
+      },
+      "bundleIdentifier": "org.markup.exp"
+    },
+
+    "android": {
+      "splash": {
+        "ldpi": "./assets/splash/android/drawable-ldpi/splash.png",
+        "mdpi": "./assets/splash/android/drawable-mdpi/splash.png",
+        "hdpi": "./assets/splash/android/drawable-hdpi/splash.png",
+        "xdpi": "./assets/splash/android/drawable-xdpi/splash.png",
+        "xxdpi": "./assets/splash/android/drawable-xxdpi/splash.png",
+        "xxxdpi": "./assets/splash/android/drawable-xxxdpi/splash.png",
+        "resizeMode": "cover"
+      },
+      "package": "org.markup.exp"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    }
+    "assetBundlePatterns": ["**/*"]
   }
 }

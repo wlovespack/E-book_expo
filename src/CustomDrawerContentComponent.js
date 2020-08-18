@@ -24,7 +24,7 @@ function CustomDrawerContentComponent(props) {
               borderRadius: 75,
               left: 50,
             }}
-            source={require("./../assets/Logo.jpg")}
+            source={require("./../assets/Logo.png")}
           />
         </Body>
       </Header>
