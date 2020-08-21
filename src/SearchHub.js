@@ -1,7 +1,7 @@
 import {AsyncStorage} from 'react-native';
 
-// const endPoint = "https://books-hub.netlify.app/books.json";
-const endPoint = "http://192.168.43.234/bookHub/books.json";
+const endPoint = "https://books-hub.netlify.app/books.json";
+// const endPoint = "http://192.168.43.234/bookHub/books.json";
 
 export async function searchHub(searchValue, type) {
   //do the search algorithm to prepare Array
