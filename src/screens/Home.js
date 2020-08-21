@@ -16,15 +16,9 @@ import { getRecommendation } from "./../SearchHub";
 import { Spinner } from "native-base";
 //
 function Home(props) {
-  const {
-    lang,
-    continueReading,
-    recommendation,
-    theme,
-    isOnline,
-    Refresh,
-  } = useContext(Context);
-  const [appReady, setAppReady] = useState(false);
+  const { lang, continueReading, recommendation, theme, isOnline } = useContext(
+    Context
+  );
   const [recommend, setRecommend] = useState({ name: null, publisher: null });
   // const [reading, setReading] = useState({
   //   book: "Math grade 12",
@@ -288,6 +282,7 @@ function Home(props) {
   }
 }
 const s = StyleSheet.create({
+
   block: {
     position: "relative",
     top: 15,
