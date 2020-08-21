@@ -50,6 +50,12 @@ function ListHeader({ s, DATA, searchType, resultValue }) {
           )}
         </Text>
       );
+    }else if(searchType == 'recommend'){
+      return (
+        <Text style={[s.result, { color: theme.item_text }]}>
+          {lang.store_list_header_4}
+        </Text>
+      );
     }
     return null;
   }

@@ -72,6 +72,7 @@
   "store_list_header_2": "ከመደብሩ {r} :መፀሃፍ በግምት መጥቷል/መፅሃፍት በግምት መጥተዋል:",
   "store_list_header_3": "መደብሩ ውስጥ ያሉ ሁሉም {r} :መፀሃፍ እየታየ/መፅሃፍት እየታዩ: ነው",
   "store_list_notFound": "\"{r}\" ለሚለው እሰሳ ምንም ውጤት አልተገኘም",
+  "store_list_header_4": "መጀመሪያ መፀሀፉ መጫን አለበት",
   "store_list_problem": "የሆነ ችግር አለ",
   "store_list_problem_des": "መደብሩን ማግኘት አልተቻለም ምክንያቱም {r}",
   "store_list_internet": "ኢንተርኔት የለም",

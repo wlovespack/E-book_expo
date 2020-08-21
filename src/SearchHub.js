@@ -1,11 +1,12 @@
 import {AsyncStorage} from 'react-native';
 
-const endPoint = "https://books-hub.netlify.app/books.json";
+// const endPoint = "https://books-hub.netlify.app/books.json";
+const endPoint = "http://192.168.43.234/bookHub/books.json";
 
 export async function searchHub(searchValue, type) {
   //do the search algorithm to prepare Array
   function searchEngine(storeInfo) {
-    if (type == "search") {
+    if (type == "search" || type == 'recommend') {
       let array = [];
       storeInfo.map((i) => {
         const key = i.key.toLowerCase();
@@ -49,8 +50,7 @@ export async function searchHub(searchValue, type) {
       return extract();
     } else if (type == "all") {
       return storeInfo;
-    } else {
-    }
+    } 
   }
   // async function getData() {
   //   const DB = await Storage.getItem('DB');
@@ -110,7 +110,9 @@ export async function getRecommendation() {
   }
   else {
     return getStore().then(e => {
-      return e.recommend;
+      if(e){
+        return e.recommend;
+      }
     });
   }
 }

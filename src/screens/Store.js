@@ -25,7 +25,7 @@ import { TouchableNativeFeedback } from "react-native-gesture-handler";
 //
 
 function Store(props) {
-  const { theme, lang,isOnline } = useContext(Context);
+  const { theme, lang, isOnline } = useContext(Context);
   const [text, setText] = useState("");
   const [resultValue, setResultValue] = useState("");
   const [DATA, setDATA] = useState([]);
@@ -116,7 +116,19 @@ function Store(props) {
         }
       })
       .catch((err) => console.log(err));
+    //
   }, []);
+  useEffect(() => {
+    if (props.navigation.dangerouslyGetParent().state.routes[0].params) {
+      const arStr = props.navigation
+        .dangerouslyGetParent()
+        .state.routes[0].params[0].key.split(":");
+      let str = "";
+      arStr.map((i) => (str += i + " "));
+      search(str, "recommend");
+    }
+  }, [!!props.navigation.dangerouslyGetParent().state.routes[0].params]);
+
   const lookForBook = (id) => {
     let found = false;
     existingBooks.map((i) => {
@@ -203,7 +215,11 @@ function Store(props) {
           )}
           columnWrapperStyle={s.col}
           ListEmptyComponent={() => (
-            <EmptyList s={s} failedRequest={failedRequest} resultValue={resultValue}/>
+            <EmptyList
+              s={s}
+              failedRequest={failedRequest}
+              resultValue={resultValue}
+            />
           )}
           ListHeaderComponent={() => (
             <ListHeader

@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState,useContext,useEffect} from "react";
 import {
   Text,
   View,
@@ -10,15 +10,16 @@ import {
   TouchableNativeFeedback,
   AsyncStorage,
   Button,
+  ToastAndroid,
 } from "react-native";
 import Screen from "../Screen";
 import Context from "../Context";
 //
 
 function Books(props) {
-  const { theme, lang } = React.useContext(Context);
-  const [DATA, setDATA] = React.useState([]);
-  const [loadingBooks, setLoadingBooks] = React.useState(false);
+  const { theme, lang } = useContext(Context);
+  const [DATA, setDATA] = useState([]);
+  const [loadingBooks, setLoadingBooks] = useState(false);
   const fetchBooks = () => {
     setLoadingBooks(true);
     // AsyncStorage.removeItem("books")
@@ -32,7 +33,7 @@ function Books(props) {
       })
       .catch((err) => console.log(err));
   };
-  React.useEffect(()=>{
+  useEffect(()=>{
     // AsyncStorage.removeItem("books")
     AsyncStorage.getItem("books")
       .then((e) => {
@@ -42,7 +43,19 @@ function Books(props) {
         }
       })
       .catch((err) => console.log(err));
-  },[])
+  },[]);
+  useEffect(() => {
+    if (props.navigation.dangerouslyGetParent().state.routes[0].params) {
+      ToastAndroid.showWithGravityAndOffset(
+        "Opening " + props.navigation.dangerouslyGetParent().state.routes[0].params[0].name + "...",
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        95
+      );
+    }
+  }, [!!props.navigation.dangerouslyGetParent().state.routes[0].params]);
+
   function Item({ id, img }) {
     return (
       <TouchableNativeFeedback onPress={() => console.log("Opening Book ... ")}>

@@ -71,6 +71,7 @@
   "store_list_header_1": "Found {r} :result/results: for \"{r2}\"",
   "store_list_header_2": "Loaded {r} random :book/books:",
   "store_list_header_3": "Showing all of {r} :book/books:",
+  "store_list_header_4": "Download to reading recommended book.",
   "store_list_notFound": "No results found for \"{r}\"",
   "store_list_problem": "There is some Problem!",
   "store_list_problem_des": "Couldn't access the store because: {r}",

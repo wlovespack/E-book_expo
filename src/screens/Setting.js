@@ -17,24 +17,27 @@ import Context, { lang } from "../Context";
 //
 function Setting(props) {
   const { theme, lang } = useContext(Context);
+  const bounce = () => {
+    AsyncStorage.setItem('bounce',JSON.stringify(true))
+  }
   return (
     <Screen {...props}>
       <View style={s.con}>
         <Text style={[s.section, { color: theme.item_fadedText }]}>
           {lang.setting_section_1}
         </Text>
-        <Language />
+        <Language bounce={bounce}/>
 
         <Text style={[s.section, { color: theme.item_fadedText }]}>
           {lang.setting_section_2}
         </Text>
-        <Continue />
-        <Recommended />
+        <Continue bounce={bounce}/>
+        <Recommended bounce={bounce}/>
 
         <Text style={[s.section, { color: theme.item_fadedText }]}>
           {lang.setting_section_3}
         </Text>
-        <Theme />
+        <Theme bounce={bounce}/>
         <Text style={[s.section, { color: theme.item_fadedText }]}>
           {lang.setting_section_4}
         </Text>
@@ -47,7 +50,7 @@ function Setting(props) {
 
 export default Setting;
 
-const Language = () => {
+const Language = ({bounce}) => {
   const { lang, changeChosenLanguage, chosenLanguage, theme } = useContext(
     Context
   );
@@ -67,7 +70,7 @@ const Language = () => {
           selectedValue={chosenLanguage}
           style={[s.picker, { color: theme.item_text }]}
           prompt={lang.setting_pickerTitle_1}
-          onValueChange={(itemValue) => changeChosenLanguage(itemValue)}
+          onValueChange={(itemValue) => {changeChosenLanguage(itemValue);bounce()}}
         >
           <Picker.Item label="English" value="en" />
           <Picker.Item label="አማርኛ" value="am" />
@@ -77,7 +80,7 @@ const Language = () => {
   );
 };
 
-const Continue = () => {
+const Continue = ({bounce}) => {
   const { continueReading, changeContinueReading, theme, lang } = useContext(
     Context
   );
@@ -95,6 +98,7 @@ const Continue = () => {
         <Switch
           value={continueReading}
           onValueChange={(v) => {
+            bounce();
             changeContinueReading(v);
           }}
         />
@@ -103,7 +107,7 @@ const Continue = () => {
   );
 };
 
-const Recommended = () => {
+const Recommended = ({bounce}) => {
   const { recommendation, changeRecommendation, theme, lang } = useContext(
     Context
   );
@@ -121,6 +125,7 @@ const Recommended = () => {
         <Switch
           value={recommendation}
           onValueChange={(v) => {
+            bounce()
             changeRecommendation(v);
           }}
         />
@@ -129,7 +134,7 @@ const Recommended = () => {
   );
 };
 
-const Theme = () => {
+const Theme = ({bounce}) => {
   const { theme, lang, changeTheme, chosenTheme } = useContext(Context);
   return (
     <View
@@ -146,7 +151,7 @@ const Theme = () => {
           selectedValue={chosenTheme}
           style={[s.picker, { color: theme.item_text }]}
           prompt={lang.setting_pickerTitle_2}
-          onValueChange={(itemValue) => changeTheme(itemValue)}
+          onValueChange={(itemValue) => {bounce();changeTheme(itemValue)}}
         >
           <Picker.Item label={lang.setting_item_4_label_1} value="default" />
           <Picker.Item label={lang.setting_item_4_label_2} value="light" />

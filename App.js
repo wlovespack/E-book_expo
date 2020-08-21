@@ -33,14 +33,14 @@ function App() {
   // check if the device has internet connection
   useEffect(()=>{
    function checkNetwork(){
-     Network.getNetworkStateAsync().then(({isInternetReachable})=>{
+     Network.getNetworkStateAsync().then(({type,isInternetReachable})=>{
       if(isOnline !== isInternetReachable){
         setIsOnline(isInternetReachable);
       } 
       }).catch(err=>console.log(err))
     }
     checkNetwork();
-    const interval = setInterval(checkNetwork,5000);
+    const interval = setInterval(checkNetwork,10000);
     return ()=>clearInterval(interval)
   },[])
   //
@@ -117,7 +117,6 @@ function App() {
   useEffect(() => {
     setTheme(Themes[chosenTheme]);
   }, [chosenTheme]);
-
   const Nav = createAppContainer(
     createDrawerNavigator(
       {

@@ -5,6 +5,7 @@ import {
   View,
   Button,
   TouchableNativeFeedback,
+  AsyncStorage,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 //component
@@ -12,12 +13,19 @@ import Screen from "./../Screen";
 //context
 import Context from "./../Context";
 import { getRecommendation } from "./../SearchHub";
+import { Spinner } from "native-base";
 //
 function Home(props) {
-  const { lang, continueReading, recommendation, theme, isOnline } = useContext(
-    Context
-  );
-  const [recommend, setRecommend] = useState({name:null,publisher:null});
+  const {
+    lang,
+    continueReading,
+    recommendation,
+    theme,
+    isOnline,
+    Refresh,
+  } = useContext(Context);
+  const [appReady, setAppReady] = useState(false);
+  const [recommend, setRecommend] = useState({ name: null, publisher: null });
   // const [reading, setReading] = useState({
   //   book: "Math grade 12",
   //   page: 12,
@@ -26,206 +34,258 @@ function Home(props) {
   const [reading, setReading] = useState(false);
   //
   useEffect(() => {
-    getRecommendation().then((e) => setRecommend(e)).catch(err=>{
-      console.log(err);
-      setRecommend({name:"Network failed"})
-    });
+    AsyncStorage.getItem("bounce").then((e) => {
+      if (e) {
+        props.navigation.navigate(lang.menu_item_4);
+        AsyncStorage.removeItem("bounce");
+      }
+      setAppReady(true);
+    }).catch(()=>setAppReady(true));
+    if (recommendation) {
+      getRecommendation()
+        .then((e) => setRecommend(e))
+        .catch((err) => {
+          console.log(err);
+          setRecommend({ name: "Network failed" });
+        });
+    }
   }, []);
-  return (
-    <Screen {...props}>
-      {continueReading ? (
-        <View
-          style={[
-            s.block,
-            {
-              backgroundColor: theme.item_bg,
-              borderColor: theme.item_border,
-            },
-          ]}
-        >
-          <View style={[s.head, { backgroundColor: theme.home_continue_bg }]}>
-            <Text style={[s.continue, { color: theme.item_fadedText }]}>
-              {lang.home_card_1_header}
-            </Text>
-          </View>
-          {reading ? (
-            <View style={s.body}>
-              <View
-                style={{
-                  padding: 5,
-                  borderRightWidth: 2,
-                  borderRightColor: theme.item_border,
-                }}
-              >
-                <Text style={[s.des, { color: theme.item_fadedText }]}>
-                  {lang.home_card_1_item_1}:
-                </Text>
-                <Text style={[s.value, { color: theme.item_text }]}>
-                  {reading.book}{" "}
-                </Text>
-              </View>
-              <View
-                style={{
-                  flex: 1,
-                  padding: 5,
-                  borderRightWidth: 2,
-                  borderRightColor: theme.item_border,
-                }}
-              >
-                <Text style={[s.des, { color: theme.item_fadedText }]}>
-                  {lang.home_card_1_item_2}:
-                </Text>
-                <Text style={[s.value, { color: theme.item_text }]}>
-                  {" "}
-                  {reading.page}
-                </Text>
-              </View>
-              <View style={{ flex: 2, padding: 5 }}>
-                <Text style={[s.des, { color: theme.item_fadedText }]}>
-                  {lang.home_card_1_item_3}:
-                </Text>
-                <Text style={[s.value, { color: theme.item_text }]}>
-                  {" "}
-                  {reading.time}
-                </Text>
-              </View>
+  const read = () => {
+    const pass = [recommend, Math.random()];
+    if (recommend.id) {
+      AsyncStorage.getItem("books").then((e) => {
+        if (e) {
+          JSON.parse(e).map((i) => {
+            if (i.id == recommend.id) {
+              props.navigation.setParams(pass);
+              props.navigation.navigate(lang.menu_item_2);
+              return;
+            }
+          });
+        }
+      });
+      props.navigation.setParams(pass);
+      props.navigation.navigate(lang.menu_item_3);
+      return;
+    }
+  };
+  if (appReady) {
+    return (
+      <Screen {...props}>
+        {continueReading ? (
+          <View
+            style={[
+              s.block,
+              {
+                backgroundColor: theme.item_bg,
+                borderColor: theme.item_border,
+              },
+            ]}
+          >
+            <View style={[s.head, { backgroundColor: theme.home_continue_bg }]}>
+              <Text style={[s.continue, { color: theme.item_fadedText }]}>
+                {lang.home_card_1_header}
+              </Text>
             </View>
-          ) : (
-            <View style={s.body2}>
-            <View style={s.noInternetCon}>
+            {reading ? (
+              <View style={s.body}>
+                <View
+                  style={{
+                    padding: 5,
+                    borderRightWidth: 2,
+                    borderRightColor: theme.item_border,
+                  }}
+                >
+                  <Text style={[s.des, { color: theme.item_fadedText }]}>
+                    {lang.home_card_1_item_1}:
+                  </Text>
+                  <Text style={[s.value, { color: theme.item_text }]}>
+                    {reading.book}{" "}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flex: 1,
+                    padding: 5,
+                    borderRightWidth: 2,
+                    borderRightColor: theme.item_border,
+                  }}
+                >
+                  <Text style={[s.des, { color: theme.item_fadedText }]}>
+                    {lang.home_card_1_item_2}:
+                  </Text>
+                  <Text style={[s.value, { color: theme.item_text }]}>
+                    {" "}
+                    {reading.page}
+                  </Text>
+                </View>
+                <View style={{ flex: 2, padding: 5 }}>
+                  <Text style={[s.des, { color: theme.item_fadedText }]}>
+                    {lang.home_card_1_item_3}:
+                  </Text>
+                  <Text style={[s.value, { color: theme.item_text }]}>
+                    {" "}
+                    {reading.time}
+                  </Text>
+                </View>
+              </View>
+            ) : (
+              <View style={s.body2}>
+                <View style={s.noInternetCon}>
                   <Ionicons
                     name="md-sad"
                     style={s.noInternetIcon}
                     size={25}
                     color={theme.item_fadedText}
                   />
-              <Text style={[s.noInternet, { color: theme.item_fadedText }]}>
-                Nothing to show
-              </Text>
-              </View>
-              <Text style={[s.noInternetDes, { color: theme.item_fadedText }]}>
-                Once you start reading some book this feature will be available
-              </Text>
-            </View>
-          )}
-          <Button title={`${lang.home_button_1} >>`} color={theme.button} />
-        </View>
-      ) : (
-        <View />
-      )}
-      {recommendation ? (
-        <View
-          style={[
-            s.block,
-            { borderColor: theme.item_border, backgroundColor: theme.item_bg },
-          ]}
-        >
-          <View style={[s.head2, { backgroundColor: theme.home_recommend_bg }]}>
-            <Text style={[s.continue, { color: theme.item_fadedText }]}>
-              {lang.home_card_2_header}
-            </Text>
-          </View>
-          <View style={s.body2}>
-            {isOnline ? (
-              <View>
-                <Text style={[s.title, { color: theme.item_text }]}>
-                  {recommend.name ? recommend.name : "Network failed"}
-                </Text>
-                <Text style={[s.publisher, { color: theme.item_fadedText }]}>
-                  {recommend.publisher ? lang.home_card_2_item_1 + ': ' + recommend.publisher : "Network failed check your internet connection"}
-                </Text>
-              </View>
-            ) : (
-              <View>
-                <View style={s.noInternetCon}>
-                  <Ionicons
-                    name="md-airplane"
-                    style={s.noInternetIcon}
-                    size={25}
-                    color={theme.item_fadedText}
-                  />
                   <Text style={[s.noInternet, { color: theme.item_fadedText }]}>
-                    No Internet
+                    Nothing to show
                   </Text>
                 </View>
                 <Text
                   style={[s.noInternetDes, { color: theme.item_fadedText }]}
                 >
-                  Internet connection is needed to show recommended books.
+                  Once you start reading some book this feature will be
+                  available
                 </Text>
               </View>
             )}
+            <Button title={`${lang.home_button_1} >>`} color={theme.button} />
           </View>
-          <Button
-            title={`${lang.home_button_2} >>`}
-            color={theme.button}
-          />
-        </View>
-      ) : (
-        <View />
-      )}
-      <View style={s.cards}>
-        <TouchableNativeFeedback
-          onPress={() => props.navigation.navigate(lang.menu_item_3)}
-        >
+        ) : (
+          <View />
+        )}
+        {recommendation ? (
           <View
             style={[
-              s.card,
+              s.block,
               {
                 borderColor: theme.item_border,
                 backgroundColor: theme.item_bg,
               },
             ]}
           >
-            <Ionicons name="md-cart" size={35} color={theme.item_text} />
-            <Text style={[s.cardTitle, { color: theme.item_text }]}>
-              {lang.home_smallCard_1}
-            </Text>
-          </View>
-        </TouchableNativeFeedback>
-        <TouchableNativeFeedback
-          onPress={() => props.navigation.navigate(lang.menu_item_2)}
-        >
-          <View
-            style={[
-              s.card,
-              {
-                borderColor: theme.item_border,
-                backgroundColor: theme.item_bg,
-              },
-            ]}
-          >
-            <Ionicons name="md-bookmarks" size={35} color={theme.item_text} />
-            <Text style={[s.cardTitle, { color: theme.item_text }]}>
-              {lang.home_smallCard_2}
-            </Text>
-          </View>
-        </TouchableNativeFeedback>
-        <TouchableNativeFeedback
-          onPress={() => props.navigation.navigate(lang.menu_item_5)}
-        >
-          <View
-            style={[
-              s.card1,
-              {
-                borderColor: theme.item_border,
-                backgroundColor: theme.item_bg,
-              },
-            ]}
-          >
-            <Ionicons
-              name="md-information-circle"
-              size={35}
-              color={theme.item_text}
+            <View
+              style={[s.head2, { backgroundColor: theme.home_recommend_bg }]}
+            >
+              <Text style={[s.continue, { color: theme.item_fadedText }]}>
+                {lang.home_card_2_header}
+              </Text>
+            </View>
+            <View style={s.body2}>
+              {isOnline ? (
+                <View>
+                  <Text style={[s.title, { color: theme.item_text }]}>
+                    {recommend.name ? recommend.name : "Network failed"}
+                  </Text>
+                  <Text style={[s.publisher, { color: theme.item_fadedText }]}>
+                    {recommend.publisher
+                      ? lang.home_card_2_item_1 + ": " + recommend.publisher
+                      : "Network failed check your internet connection"}
+                  </Text>
+                </View>
+              ) : (
+                <View>
+                  <View style={s.noInternetCon}>
+                    <Ionicons
+                      name="md-airplane"
+                      style={s.noInternetIcon}
+                      size={25}
+                      color={theme.item_fadedText}
+                    />
+                    <Text
+                      style={[s.noInternet, { color: theme.item_fadedText }]}
+                    >
+                      No Internet
+                    </Text>
+                  </View>
+                  <Text
+                    style={[s.noInternetDes, { color: theme.item_fadedText }]}
+                  >
+                    Internet connection is needed to show recommended books.
+                  </Text>
+                </View>
+              )}
+            </View>
+            <Button
+              title={`${lang.home_button_2} >>`}
+              color={theme.button}
+              onPress={() => read()}
             />
-            <Text style={[s.cardTitle, { color: theme.item_text }]}>
-              {lang.home_smallCard_3}
-            </Text>
           </View>
-        </TouchableNativeFeedback>
-      </View>
-    </Screen>
-  );
+        ) : (
+          <View />
+        )}
+        <View style={s.cards}>
+          <TouchableNativeFeedback
+            onPress={() => props.navigation.navigate(lang.menu_item_3)}
+          >
+            <View
+              style={[
+                s.card,
+                {
+                  borderColor: theme.item_border,
+                  backgroundColor: theme.item_bg,
+                },
+              ]}
+            >
+              <Ionicons name="md-cart" size={35} color={theme.item_text} />
+              <Text style={[s.cardTitle, { color: theme.item_text }]}>
+                {lang.home_smallCard_1}
+              </Text>
+            </View>
+          </TouchableNativeFeedback>
+          <TouchableNativeFeedback
+            onPress={() => props.navigation.navigate(lang.menu_item_2)}
+          >
+            <View
+              style={[
+                s.card,
+                {
+                  borderColor: theme.item_border,
+                  backgroundColor: theme.item_bg,
+                },
+              ]}
+            >
+              <Ionicons name="md-bookmarks" size={35} color={theme.item_text} />
+              <Text style={[s.cardTitle, { color: theme.item_text }]}>
+                {lang.home_smallCard_2}
+              </Text>
+            </View>
+          </TouchableNativeFeedback>
+          <TouchableNativeFeedback
+            onPress={() => props.navigation.navigate(lang.menu_item_5)}
+          >
+            <View
+              style={[
+                s.card1,
+                {
+                  borderColor: theme.item_border,
+                  backgroundColor: theme.item_bg,
+                },
+              ]}
+            >
+              <Ionicons
+                name="md-information-circle"
+                size={35}
+                color={theme.item_text}
+              />
+              <Text style={[s.cardTitle, { color: theme.item_text }]}>
+                {lang.home_smallCard_3}
+              </Text>
+            </View>
+          </TouchableNativeFeedback>
+        </View>
+      </Screen>
+    );
+  } else {
+    return (
+      <Spinner
+        style={{ position: "absolute", top: 47 + "%", left: 47 + "%" }}
+        color="black"
+      />
+    );
+  }
 }
 const s = StyleSheet.create({
   block: {
