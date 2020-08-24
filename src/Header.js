@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { Header, Left, Button, Right, Body } from "native-base";
 import { Text, AsyncStorage } from "react-native";
 import { Ionicons } from '@expo/vector-icons';

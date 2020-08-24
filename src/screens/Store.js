@@ -4,13 +4,13 @@ import {
   View,
   SafeAreaView,
   StyleSheet,
-  FlatList,
   TextInput,
   AsyncStorage,
   ToastAndroid,
   Button,
   Alert,
 } from "react-native";
+import { FlatList } from "react-navigation";
 import { Spinner } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
 // import * as Network from 'expo-network';
@@ -102,31 +102,38 @@ function Store(props) {
       setFetchAllPressed(true);
     }
   };
+  let mount = true;
   useEffect(() => {
-    // checkNetwork();
-    AsyncStorage.getItem("books")
-      .then((e) => {
-        if (e) {
-          const books = JSON.parse(e);
-          let result = [];
-          books.map((i) => {
-            result.push(i.id);
-          });
-          setExistingBooks(result);
-        }
-      })
-      .catch((err) => console.log(err));
-    //
+    if (mount) {
+      // checkNetwork();
+      AsyncStorage.getItem("books")
+        .then((e) => {
+          if (e) {
+            const books = JSON.parse(e);
+            let result = [];
+            books.map((i) => {
+              result.push(i.id);
+            });
+            setExistingBooks(result);
+          }
+        })
+        .catch((err) => console.log(err));
+      //
+    }
+    return () => (mount = false);
   }, []);
   useEffect(() => {
-    if (props.navigation.dangerouslyGetParent().state.routes[0].params) {
-      const arStr = props.navigation
-        .dangerouslyGetParent()
-        .state.routes[0].params[0].key.split(":");
-      let str = "";
-      arStr.map((i) => (str += i + " "));
-      search(str, "recommend");
+    if (mount) {
+      if (props.navigation.dangerouslyGetParent().state.routes[0].params) {
+        const arStr = props.navigation
+          .dangerouslyGetParent()
+          .state.routes[0].params[0].key.split(":");
+        let str = "";
+        arStr.map((i) => (str += i + " "));
+        search(str, "recommend");
+      }
     }
+    return () => (mount = false);
   }, [!!props.navigation.dangerouslyGetParent().state.routes[0].params]);
 
   const lookForBook = (id) => {

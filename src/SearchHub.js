@@ -36,7 +36,7 @@ export async function searchHub(searchValue, type) {
         let array = [];
         let x = 0;
         storeInfo.map((i) => {
-          if (Math.random() < 1 / storeInfo.length && x <= 10) {
+          if (Math.random() < 0.3 && x < 10) {
             array.push(i);
             x++;
           }

@@ -1,8 +1,7 @@
-import React,{useState,useContext,useEffect} from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Text,
   View,
-  FlatList,
   StyleSheet,
   Image,
   ImageBackground,
@@ -12,6 +11,7 @@ import {
   Button,
   ToastAndroid,
 } from "react-native";
+import { FlatList } from "react-navigation";
 import Screen from "../Screen";
 import Context from "../Context";
 //
@@ -33,27 +33,37 @@ function Books(props) {
       })
       .catch((err) => console.log(err));
   };
-  useEffect(()=>{
-    // AsyncStorage.removeItem("books")
-    AsyncStorage.getItem("books")
-      .then((e) => {
-        const books = JSON.parse(e);
-        if (books) {
-          setDATA(books);
-        }
-      })
-      .catch((err) => console.log(err));
-  },[]);
+  let mount = true;
   useEffect(() => {
-    if (props.navigation.dangerouslyGetParent().state.routes[0].params) {
-      ToastAndroid.showWithGravityAndOffset(
-        "Opening " + props.navigation.dangerouslyGetParent().state.routes[0].params[0].name + "...",
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-        25,
-        95
-      );
+    // AsyncStorage.removeItem("books")
+    if (mount) {
+      AsyncStorage.getItem("books")
+        .then((e) => {
+          const books = JSON.parse(e);
+          if (books) {
+            setDATA(books);
+          }
+        })
+        .catch((err) => console.log(err));
     }
+    return () => (mount = false);
+  }, []);
+  useEffect(() => {
+    if (mount) {
+      if (props.navigation.dangerouslyGetParent().state.routes[0].params) {
+        ToastAndroid.showWithGravityAndOffset(
+          "Opening " +
+            props.navigation.dangerouslyGetParent().state.routes[0].params[0]
+              .name +
+            "...",
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM,
+          25,
+          95
+        );
+      }
+    }
+    return () => (mount = false);
   }, [!!props.navigation.dangerouslyGetParent().state.routes[0].params]);
 
   function Item({ id, img }) {
@@ -87,7 +97,11 @@ function Books(props) {
           {lang.books_head}
         </Text>
         <View style={s.getBooks}>
-          <Button title={orReplacer(lang.books_button, (DATA.length > 0))} color={theme.button} onPress={() => props.navigation.navigate(lang.menu_item_3)} />
+          <Button
+            title={orReplacer(lang.books_button, DATA.length > 0)}
+            color={theme.button}
+            onPress={() => props.navigation.navigate(lang.menu_item_3)}
+          />
         </View>
         <FlatList
           style={s.flatList}
@@ -115,7 +129,7 @@ const s = StyleSheet.create({
   flatList: {
     // backgroundColor:'red',
     top: -50,
-    paddingTop: 80
+    paddingTop: 80,
   },
   block: {
     width: 45 + "%",
@@ -139,7 +153,7 @@ const s = StyleSheet.create({
     position: "absolute",
     top: 15,
     right: "5%",
-    zIndex: 100
+    zIndex: 100,
   },
   empty: {
     fontSize: 20,

@@ -6,6 +6,7 @@ import {
   Button,
   TouchableNativeFeedback,
   AsyncStorage,
+  ToastAndroid,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 //component
@@ -19,6 +20,7 @@ function Home(props) {
   const { lang, continueReading, recommendation, theme, isOnline } = useContext(
     Context
   );
+  const [appReady, setAppReady] = useState(false);
   const [recommend, setRecommend] = useState({ name: null, publisher: null });
   // const [reading, setReading] = useState({
   //   book: "Math grade 12",
@@ -27,23 +29,50 @@ function Home(props) {
   // });
   const [reading, setReading] = useState(false);
   //
+  let mount = true;
   useEffect(() => {
-    AsyncStorage.getItem("bounce").then((e) => {
-      if (e) {
-        props.navigation.navigate(lang.menu_item_4);
-        AsyncStorage.removeItem("bounce");
-      }
-      setAppReady(true);
-    }).catch(()=>setAppReady(true));
-    if (recommendation) {
-      getRecommendation()
-        .then((e) => setRecommend(e))
-        .catch((err) => {
-          console.log(err);
-          setRecommend({ name: "Network failed" });
-        });
+    if (mount) {
+      AsyncStorage.getItem("bounce")
+        .then((e) => {
+          if (e) {
+            props.navigation.navigate(lang.menu_item_4);
+            AsyncStorage.removeItem("bounce");
+          }
+          setAppReady(true);
+        })
+        .catch(() => setAppReady(true));
+      getRecommended();
     }
+    return () => (mount = false);
   }, []);
+
+  const getRecommended = (again = false) => {
+      if (recommendation) {
+        if(again){
+          toast('Refreshing recommendation...')
+        }
+        getRecommendation()
+          .then((e) => setRecommend(e))
+          .catch((err) => {
+            console.log(err);
+            if(again){
+              toast('Recommendation unreachable! Network failed')
+            }
+            if(recommend.name !== "Network failed" && mount){
+              setRecommend({ name: "Network failed" });
+            }
+          });
+      }
+  }
+  const toast = (value) => {
+    ToastAndroid.showWithGravityAndOffset(
+      value,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      95
+    );
+  };
   const read = () => {
     const pass = [recommend, Math.random()];
     if (recommend.id) {
@@ -61,6 +90,8 @@ function Home(props) {
       props.navigation.setParams(pass);
       props.navigation.navigate(lang.menu_item_3);
       return;
+    }else{
+      toast('Can\'t read recommendation. Network not available!')
     }
   };
   if (appReady) {
@@ -160,11 +191,18 @@ function Home(props) {
             ]}
           >
             <View
-              style={[s.head2, { backgroundColor: theme.home_recommend_bg }]}
+              style={[s.head2, { flexDirection:'row',backgroundColor: theme.home_recommend_bg }]}
             >
-              <Text style={[s.continue, { color: theme.item_fadedText }]}>
+              <Text style={[s.continue, { flex:11,color: theme.item_fadedText }]}>
                 {lang.home_card_2_header}
               </Text>
+              {recommend.name == "Network failed"?
+              <TouchableNativeFeedback onPress={()=>getRecommended(true)}>
+                <View style={{flex:1,borderRadius:12,alignItems:'center'}}>
+                <Ionicons name="md-refresh" size={27} color="white"/>
+                </View>
+              </TouchableNativeFeedback>
+              :<View/>}
             </View>
             <View style={s.body2}>
               {isOnline ? (
@@ -274,15 +312,16 @@ function Home(props) {
     );
   } else {
     return (
+      <View style={{backgroundColor:theme.bg,width:'100%',height:'100%'}}>
       <Spinner
         style={{ position: "absolute", top: 47 + "%", left: 47 + "%" }}
-        color="black"
+        color={theme.item_text}
       />
+      </View>
     );
   }
 }
 const s = StyleSheet.create({
-
   block: {
     position: "relative",
     top: 15,

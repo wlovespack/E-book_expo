@@ -33,7 +33,7 @@ function BookCard({
   const [bookExists, setBookExists] = React.useState(
     lookForBook(img + file.url)
   );
-
+    console.log(progress,size)
   const changeHide = (v) => {
     if (!bookExists) {
       setHide(v);
@@ -78,7 +78,6 @@ function BookCard({
     setDownloading(true);
     const callback = (downloadProgress) => {
       setProgress(downloadProgress.totalBytesWritten / 1000000);
-      setSize(downloadProgress.totalBytesExpectedToWrite / 1000000);
     };
     if (!bookExists) {
       const fileName = file.url.split("/");
