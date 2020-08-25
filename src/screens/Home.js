@@ -77,19 +77,21 @@ function Home(props) {
     const pass = [recommend, Math.random()];
     if (recommend.id) {
       AsyncStorage.getItem("books").then((e) => {
+        let found = false;
         if (e) {
           JSON.parse(e).map((i) => {
             if (i.id == recommend.id) {
+              found = true;
               props.navigation.setParams(pass);
               props.navigation.navigate(lang.menu_item_2);
-              return;
             }
           });
         }
+        if(!found){
+          props.navigation.setParams(pass);
+          props.navigation.navigate(lang.menu_item_3);
+        }
       });
-      props.navigation.setParams(pass);
-      props.navigation.navigate(lang.menu_item_3);
-      return;
     }else{
       toast('Can\'t read recommendation. Network not available!')
     }
@@ -199,7 +201,7 @@ function Home(props) {
               {recommend.name == "Network failed"?
               <TouchableNativeFeedback onPress={()=>getRecommended(true)}>
                 <View style={{flex:1,borderRadius:12,alignItems:'center'}}>
-                <Ionicons name="md-refresh" size={27} color="white"/>
+                <Ionicons name="md-refresh" size={27} color={theme.item_text}/>
                 </View>
               </TouchableNativeFeedback>
               :<View/>}

@@ -12,14 +12,17 @@ import {
   ToastAndroid,
 } from "react-native";
 import { FlatList } from "react-navigation";
+//
 import Screen from "../Screen";
-import Context from "../Context";
+import Context from "../Context"; 
 //
 
 function Books(props) {
   const { theme, lang } = useContext(Context);
   const [DATA, setDATA] = useState([]);
   const [loadingBooks, setLoadingBooks] = useState(false);
+  const [openBook, setOpenBook] = useState(null);
+  //
   const fetchBooks = () => {
     setLoadingBooks(true);
     // AsyncStorage.removeItem("books")
@@ -66,9 +69,9 @@ function Books(props) {
     return () => (mount = false);
   }, [!!props.navigation.dangerouslyGetParent().state.routes[0].params]);
 
-  function Item({ id, img }) {
+  function Item({ id, img,file }) {
     return (
-      <TouchableNativeFeedback onPress={() => console.log("Opening Book ... ")}>
+      <TouchableNativeFeedback onPress={() => {setOpenBook(file)}}>
         <View style={[s.block, { borderColor: theme.item_border }]} key={id}>
           <ImageBackground
             source={{ uri: img }}
@@ -90,37 +93,45 @@ function Books(props) {
     return part[0] + part1 + part[2];
   };
   //
-  return (
-    <Screen {...props}>
-      <SafeAreaView>
-        <Text style={[s.head, { color: theme.item_text }]}>
-          {lang.books_head}
-        </Text>
-        <View style={s.getBooks}>
-          <Button
-            title={orReplacer(lang.books_button, DATA.length > 0)}
-            color={theme.button}
-            onPress={() => props.navigation.navigate(lang.menu_item_3)}
+
+  if (openBook) {
+    return (<View style={{justifyContent:'center',alignItems:'center'}}>
+      <Text style={{marginBottom:50,fontSize:20}}>Open the book at: [{openBook}]</Text>
+      <Button title='Go back' onPress={()=>setOpenBook(null)}/>
+    </View>)
+  } else {
+    return (
+      <Screen {...props}>
+        <SafeAreaView>
+          <Text style={[s.head, { color: theme.item_text }]}>
+            {lang.books_head}
+          </Text>
+          <View style={s.getBooks}>
+            <Button
+              title={orReplacer(lang.books_button, DATA.length > 0)}
+              color={theme.button}
+              onPress={() => props.navigation.navigate(lang.menu_item_3)}
+            />
+          </View>
+          <FlatList
+            style={s.flatList}
+            data={DATA}
+            keyExtractor={(item, index) => index}
+            numColumns={2}
+            renderItem={({ item }) => <Item id={item.id} img={item.img} file={item.file}/>}
+            columnWrapperStyle={s.col}
+            ListEmptyComponent={() => (
+              <Text style={[s.empty, { color: theme.item_text }]}>
+                {lang.books_empty}
+              </Text>
+            )}
+            onRefresh={fetchBooks}
+            refreshing={loadingBooks}
           />
-        </View>
-        <FlatList
-          style={s.flatList}
-          data={DATA}
-          keyExtractor={(item, index) => index}
-          numColumns={2}
-          renderItem={({ item }) => <Item id={item.id} img={item.img} />}
-          columnWrapperStyle={s.col}
-          ListEmptyComponent={() => (
-            <Text style={[s.empty, { color: theme.item_text }]}>
-              {lang.books_empty}
-            </Text>
-          )}
-          onRefresh={fetchBooks}
-          refreshing={loadingBooks}
-        />
-      </SafeAreaView>
-    </Screen>
-  );
+        </SafeAreaView>
+      </Screen>
+    );
+  }
 }
 
 export default Books;
